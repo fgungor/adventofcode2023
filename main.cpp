@@ -139,7 +139,7 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
     std::cout << "Result: " << sum << std::endl;
-    std::cout << "Duration:" << duration << std::endl;
+    std::cout << "Duration: " << duration << std::endl;
 
     // Close the file (not strictly necessary as the destructor will do this)
     file.close();
