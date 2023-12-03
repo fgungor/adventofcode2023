@@ -4,7 +4,6 @@
 #include <vector>
 #include <string_view>
 #include <string>
-#include <stack>
 #include <chrono>
 
 // A DAWG structure to parse digits in word and number form

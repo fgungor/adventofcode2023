@@ -84,27 +84,25 @@ int main() {
         }
     }
 
+    // what we have
+    // 12 red cubes, 13 green cubes, and 14 blue cubes
+    const int maxRed = 12;
+    const int maxGreen = 13;
+    const int maxBlue = 14;
+
     // validate
     int sum = 0;
-    int maxRed = 0;
-    int maxGreen = 0;
-    int maxBlue = 0;
-
     for (const auto &g: games) {
-        maxRed = 0;
-        maxGreen = 0;
-        maxBlue = 0;
-
+        bool valid = true;
         for (const auto &r: g.rounds) {
-            if (r.red > maxRed)
-                maxRed = r.red;
-            if (r.green > maxGreen)
-                maxGreen = r.green;
-            if (r.blue > maxBlue)
-                maxBlue = r.blue;
+            if (r.red > maxRed || r.green > maxGreen || r.blue > maxBlue) {
+                valid = false;
+                break;
+            }
         }
 
-        sum += maxRed * maxGreen * maxBlue;
+        if (valid)
+            sum += g.number;
     }
 
 
