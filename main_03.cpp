@@ -4,7 +4,7 @@
 #include <string_view>
 #include <string>
 #include <chrono>
-#include <unordered_map>
+
 
 int main() {
     // Open the file
@@ -26,16 +26,21 @@ int main() {
         }
     }
 
+
     int sum = 0;
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    const int rows = static_cast<int>(lines.size());
-    const int cols = static_cast<int>(lines[0].length());
+    const auto rows = lines.size();
+    const auto cols = lines[0].length();
 
 
     auto isDigit = [](char ch) -> bool {
         return ch >= '0' && ch <= '9';
+    };
+
+    auto isSymbol = [&isDigit](char ch) -> bool {
+        return ch != 0 && ch != '.' && !isDigit(ch);
     };
 
     auto getChar = [&lines, &rows, &cols](int row, int col) -> char {
@@ -46,65 +51,40 @@ int main() {
         return 0;
     };
 
-
-    auto getGearsAround = [&](int row, int col, int numLength, std::vector<int> &out) -> void {
+    auto hasSymbolAround = [&](int row, int col) -> bool {
 
         for (int i = row - 1; i < row + 2; ++i) {
-            if (i < 0 || i >= rows)
-                continue;
-
-            for (int j = col - 1; j < col + numLength + 1; ++j) {
+            for (int j = col - 1; j < col + 2; ++j) {
+                if (col == j && row == i)
+                    continue;
                 char ch = getChar(i, j);
-                const auto hash = i * cols + j;
-                if (ch == '*' && std::find(out.begin(), out.end(), hash) == out.end()) {
-                    out.push_back(hash);
-                }
+                if (isSymbol(ch))
+                    return true;
             }
         }
+
+        return false;
     };
 
     std::string currentNumber;
-    std::unordered_map<int, std::vector<int>> gearNumbers;
-
-    std::vector<int> gears;
-
-    int currentNumCol = 0;
-    int currentNumRow = 0;
-
+    bool valid = false;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
 
             const char cur = lines[i][j];
             if (isDigit(cur)) {
-                if (currentNumber.empty()){
-                    currentNumRow = i;
-                    currentNumCol = j;
-                }
                 currentNumber.push_back(cur);
-            }
 
-            // evaluate current
-            if (!isDigit(cur) || j == cols - 1) {
-                if (!currentNumber.empty()) {
-                    const auto num = std::stoi(currentNumber);
-                    const auto len = static_cast<int>(currentNumber.length());
+                if (!valid)
+                    valid = hasSymbolAround(i, j);
+            } else {
+                if (valid && !currentNumber.empty()) {
 
-                    getGearsAround(currentNumRow, currentNumCol, len, gears);
-
-                    for (const auto gearHash : gears) {
-                        gearNumbers[gearHash].push_back(num);
-                    }
+                    sum += std::stoi(currentNumber);
                 }
-
                 currentNumber = "";
-                gears.clear();
+                valid = false;
             }
-        }
-    }
-
-    for (const auto &nums: gearNumbers) {
-        if (nums.second.size() == 2) {
-            sum += nums.second[0] * nums.second[1];
         }
     }
 
