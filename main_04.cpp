@@ -29,7 +29,7 @@ int main() {
     int sum = 0;
     auto start = std::chrono::high_resolution_clock::now();
 
-
+    
 
     auto isDigit = [](char ch) -> bool {
         return ch >= '0' && ch <= '9';
