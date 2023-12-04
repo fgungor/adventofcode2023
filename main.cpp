@@ -5,6 +5,7 @@
 #include <string>
 #include <chrono>
 #include <cassert>
+#include <stack>
 
 int main() {
     // Open the file
@@ -44,6 +45,9 @@ int main() {
 
     std::vector<int> winning;
 
+    std::vector<int> cardMatches;
+    std::vector<int> cardCopies;
+
     for (const auto& line : lines) {
 
         auto card = line.substr(9);
@@ -75,14 +79,20 @@ int main() {
             }
         }
 
-        if (countMatch > 0) {
-            sum += 1 << (countMatch - 1);
-        }
+        cardMatches.push_back(countMatch);
+        cardCopies.push_back(1);
 
         assert(countParsed == numWinning + numPlayed);
     }
 
+    for (int i = 0; i < cardCopies.size(); ++i) {
+        const auto matches = cardMatches[i];
+        for (int m = 1; m < matches + 1; ++m) {
+                cardCopies[m + i] += cardCopies[i];
+        }
 
+        sum += cardCopies[i];
+    }
 
     // Record the end time
     auto end = std::chrono::high_resolution_clock::now();
